@@ -1,0 +1,256 @@
+Configure Azure Blob Storage
+
+1
+CHALLENGE
+
+Create a Storage Account
+Create and configure a storage account.
+
+2
+CHALLENGE
+
+Create and Populate a Container
+Create a container in the newly created storage account and copy blobs to it using PowerShell.
+
+3
+CHALLENGE
+
+Restore Blob Versions and Undelete Blobs
+Edit, delete, and restore blobs.
+
+================================================================================================
+
+CHALLENGE
+Create a Storage Account
+You work for a logistics company called Globomantics which is looking to transition their data storage needs from on premises file servers to Azure Blob Storage. Your jobs is to configure an Azure Storage Account to host the static web content that's currently being hosted by the company's web server. Backups of this content are currently being created manually before changes are made, so you've also been asked to investigate Azure Blob Storage's data protection capabilities and see how changes to blobs can be reverted without requiring the data to be manually copied before changes are made.
+
+An Azure Storage Account must be created first so containers and blobs can be added to it.
+
+Log in to the Azure portal using the temporary credentials and Open Azure portal link provided.
+
+Click on the menu button in the upper-left corner (≡), and select All services.
+
+This will show an overview of all the services Microsoft Azure provides, organized by categories.
+
+Select Storage from the left sidebar under Categories.
+
+Azure offers a number of different storage-related services. The most common one is Storage accounts, which itself contains a number of sub-services including blob storage.
+
+Select Storage accounts from the list.
+
+You'll find that there are currently two storage accounts. The cs account will be used later for Azure Cloud Shell, and the other static account will be used as the source of example web content.
+
+Click the + Create button.
+
+The Pluralsight provided Subscription should already be selected; however, you will need to select which Resource group the storage account should be a part of.
+
+Click on the dropdown next to Resource group and select pluralsight-resource-group. (This may also be selected by default.)
+
+For the Storage account name enter globomantics followed by several random numbers to ensure its uniqueness.
+
+This needs to be unique across all of Azure, so if you get an error saying the storage account name is already taken, try using different random numbers after globomantics.
+
+Region should be set to (US) East US by default. 
+
+Performance will be left on Standard for now; however, Premium can be selected to use solid state drives at a higher cost when faster performance is needed.
+
+Click on the Redundancy dropdown and select Locally-redundant storage.
+
+Redundancy allows you to specify how durable your data needs to be. Locally-redundant is fine for now; however, in a real-world scenario you'd likely want to select a higher redundancy strategy.
+
+Click the Next: Advanced button.
+
+There are a few different security options on this page. One notable option is Enable Blob public access, which could be turned off to completely restrict public access to blobs in this storage account. In this case, you want to be able to create public blobs, so you should leave it enabled.
+
+The Access tier can be used to select the default access tier for blobs that don't have an explicit access tier. You can leave this on the default of Hot, but Cool could be selected if a storage account is going to primarily contain infrequently accessed blobs.
+
+Click the Next: Networking button.
+
+Access to this storage account can be restricted to specific virtual networks or even restricted using Azure Private Endpoints; however, the default of Public endpoint should be used for now.
+
+Routing preference allows you to choose whether Microsoft's network should be used for region traversal. It can be left on the default of Microsoft network routing.
+
+Click the Next: Data protection button.
+
+Check the Enable point-in-time restore for containers option.
+
+Point-in-time restore will allow you to restore blobs to a specific time within the specified retention period. In order to accomplish this, it will automatically enable a few other options.
+
+The Enable soft delete for blobs option allows you to recover blobs which are accidentally deleted or modified within the 7 day default retention period. If you wanted to retain these backups for longer, you could change the Days to retain deleted blobs setting.
+
+The Enable versioning for blobs option differs from soft deletes in that versioning will keep modified versions around until they're deleted. This is useful if you need to be able to access the history blobs in the future. If soft delete is enabled along with versioning, it will allow you to restore specific blob versions after they've been deleted, even if they're not the newest version of a blob.
+
+The Enable blob change feed option provides a complete transaction log with all changes that happen to a particular blob.
+
+With these three options enabled, point-in-time restore is able to restore blobs to the exact state that they were in at a previous point in time.
+
+Click Next: Encryption and then click Next: Tags.
+
+If you're creating multiple storage accounts, it's good practice to add tags such as Environment to organize them, but there's no need to do so now.
+
+Click the Next: Review button.
+
+Click the blue Create button.
+
+Your storage account will now be created. After a minute or two, you should see that the deployment has completed.
+
+Wait a few moments, and once it appears, click the blue Go to resource button.
+
+You should now see the newly created storage account. In the next challenge, you'll create and populate a container in this storage account.
+
+================================================================================================
+
+
+CHALLENGE
+Create and Populate a Container
+With the storage account created, it's time to create a container and populate it.
+
+Navigate to your new storage account if you're not already there by searching for globomantics in the top search bar and then selecting the Storage account with the name beginning with globomantics.
+
+Select Containers under Data storage from the left sidebar.
+
+Storage accounts can hold any number of containers, and containers can hold any number of blobs.
+
+There are currently two containers, which were created when the storage account was created. $blobchangefeed was created because the change feed option was enabled to track changes to blobs in this storage account, and $logs was created for Azure Monitor to track Storage Analytics.
+
+Click the + Container button.
+
+Enter public for the Name.
+
+Click on the Public access level dropdown and select Container.
+
+Blob would only allow specific blobs to be accessed if their name was known ahead of time, whereas Container will allow an anonymous user to enumerate the container without knowing the specific names of the blobs inside it.
+
+Note: If Allow Blob public access was set to Disabled when creating the storage account, this setting would be locked to Private.
+
+Click the blue Create button.
+
+In the Containers table, click the Name of the public container.
+
+Here files could be manually uploaded using the Upload button, but you'll be copying files to this container using Cloud Shell instead.
+
+Click on the Cloud Shell icon on the top toolbar to the right of the search bar.
+
+Select PowerShell and then click Show advanced settings.
+
+From here you can select which resource group, region, storage account, and file share Cloud Shell should use.
+
+In the You have no storage mounted pop-up, ensure the Cloud Shell region is East US.
+
+The Subscription will already be set for you, as there is only one option in the lab environment.
+
+Ensure that Resource group is set to Use existing, and that pluralsight-resource-group is selected.
+
+Important Note: At this point, ensure you have set the region and Resource group properly as per this and the last task. If not, you will later have authentication issues which will prevent PowerShell commands from working. And, after clicking Create storage in few tasks, you cannot easily change these settings; you will need to restart the lab to start over.
+
+Click Use existing under Storage account and select the cs prefixed storage account from the dropdown. (It should be selected by default.)
+
+Note:
+
+If Use existing is greyed out, it is likely you did not follow the previous two tasks: set the region and the Resource group as per the two tasks.
+
+If it is still greyed out, it may be due to an old Azure bug that still crops up infrequently. To workaround this, you will select create new and manually paste in the name, which effectively uses an existing account,
+
+Search for Storage accounts in the top search bar, right click on Storage accounts and open it in a new browser tab, copy the Name of the cs prefixed Storage account (for example, it will be something like cs5957246710844927452136), and, back at the You have no storage mounted pop-up, under Storage account select Create new, and paste in the Storage account name.
+
+Enter cloudshell under Create new for File share.
+
+Click the blue Create storage button.
+
+Cloud Shell will create the new file share and then present you with a PowerShell terminal. In order to populate this container with blobs, you'll be using the Az.Storage module for PowerShell. The source blobs are in a static container in the static storage account.
+
+In the upper-right of the Cloud Shell pane, click the maximize button.
+
+This'll help prevent the command line from becoming obscured as you run PowerShell commands in the next task.
+
+It still may be obscured, and if it is, you can press Ctrl+L to reset the view.
+
+Copy the following PowerShell script and paste it into the Cloud Shell console.
+
+$static = Get-AzStorageAccount | where StorageAccountName -like "static*"
+
+$globomantics = Get-AzStorageAccount | where StorageAccountName -like "globomantics*"
+
+Get-AzStorageBlob -Context $static.context -Container static | Start-AzStorageBlobCopy -DestContext $globomantics.context -DestContainer public
+
+This script will get the uniquely named static storage account as well as the globomantics storage account you created. After that, it will get all the blobs in the static container and copy them to the public container you created.
+
+Note: If you get any errors, it is likely you did not set up the Cloud Shell as specified. Redo that process
+
+Click the X button in the upper-right corner of the Cloud Shell console to close it.
+
+Click the Refresh button.
+
+You should now see all the static web content which will be used to host the new website. In the next challenge, you'll see how blob versioning and soft deleting work.
+
+=====================================================================================================================
+
+
+CHALLENGE
+Restore Blob Versions and Undelete Blobs
+With blobs added to the container, it's time to test the data protection capabilities of Azure Blob Storage.
+
+Right click on the index.html file and click View/edit.
+
+You'll be taken to a text editor where you can edit the blob in place.
+
+Change Globomantics in the <title> tag on line 4 to Globomantics v2.
+
+Click the Save button on the top toolbar.
+
+Click on the Versions tab.
+
+Here you can see the previous version of this blob without the v2 change.
+
+Right click on the version, click Delete, then click Yes.
+
+Turn on the Show deleted versions toggle.
+
+Because soft deletion is enabled for this storage account, the deleted version won't be fully deleted until the retention period has expired.
+
+Click on the Overview tab.
+
+Click on the blue Undelete button.
+
+The undelete blob operation will automatically undelete any of the blob's soft-deleted versions.
+
+Click on the Versions tab again.
+
+Now that version has been undeleted.
+
+Right click on the version and click the Change tier button.
+
+Click on the Access tier dropdown and select Cool.
+
+Since this old version is unlikely to be needed in the future, it can be moved to the Cool access tier where it'll incur less cost. There are other important considerations to keep in mind when using the Cool or Archive access tiers; for example, the Cool access tier has a minimum storage duration of 30 days, and the Archive storage tier has latency on the order of hours.
+
+Click the blue Save button.
+
+Click the X button in the upper-right corner to close the blob details.
+
+Right click on the index.html file and click Delete, then click the blue OK button.
+
+Once the blob has been deleted, it will no longer show up in the list of blobs. It won't be completely deleted, however, because blob versioning and soft deletion is enabled.
+
+Turn on the Show deleted blobs toggle.
+
+Right click on the deleted index.html blob and click View versions.
+
+When the blob itself was deleted, a new version was created with the current blob contents. The version with the latest Version Id at the top of the list is the version that was deleted.
+
+Right click on the top version in the list and click Make current version.
+
+Click the X button in the upper-right corner to close the blob details.
+
+The index.html blob should now have a Status of Current version since it's been restored.
+
+Right click on index.html and click Download.
+
+Because this blob is public and the Content-Type is text/html, your browser should display it as a webpage and it should be able to reference the other blob resources in the container. You may need to open the downloaded html file instead, manually, depending on your setup.
+
+You now have a public container with blobs and some version history. There are several ways Azure Blob Storage can be used. Public blobs can be accessed using the blob service endpoint and embedded in a website, or blobs can be accessed using the Azure Blob service REST API and used for dynamic data storage.
+
+Note that while HTML files are accessible using only the blob service endpoint, if an entire website is being hosted it's generally a good idea to turn on the Static website setting on the storage account and use that endpoint instead. This would then create a $web container where blobs could be copied to. An Azure CDN profile could also be created and pointed to the website endpoint to accelerate its delivery.
+
+
+
