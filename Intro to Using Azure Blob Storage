@@ -1,0 +1,62 @@
+Intro to Using Azure Blob Storage
+
+Learning Objectives
+0 of 5 completed
+Log In to the Azure Portal
+Create a Storage Account
+Create a Blob Container
+Upload Files to the Blob Container
+View Files in the Blob Container
+
+Introduction
+In this hands-on lab, we will use the Azure Portal to create and use blob storage. We will log in to the Azure Portal, create a storage account, and create a blob storage container. Finally, we will use the Azure Portal to upload sample files to our blob container and retrieve and view our blob files. After completing this lab, you will have gained the experience required to work with blob storage using the Azure Portal.
+
+Log In to the Azure Portal
+On the lab instructions page, click Open Azure Portal.
+On the Azure Portal sign-in page, enter the username you were provided on the lab instructions page.
+Click Next.
+Enter the password you were provided on the lab instructions page.
+Click Sign in.
+In the Welcome to Microsoft Azure message box, click Maybe later.
+Create a Storage Account
+Click the hamburger icon (the one with three lines) in the upper left corner to view the hub menu.
+Click All resources in the hub menu.
+Click + Add.
+Click Storage.
+Click Storage account - blob, file, table, queue.
+On the Create storage account page, configure the following settings:
+Resource group: Select the pre-provisioned resource group
+Storage account name: Give the account a unique name (e.g., "myaccount" followed by your birthday)
+Click Next : Networking >.
+Click Next : Advanced >
+Click Next : Tags >.
+Click Next : Review + create >.
+Click Create.
+Click the notifications icon at the top of the screen to monitor the progress of the deployment.
+When the deployment is complete, click Go to resource.
+Create a Blob Container
+In the left-hand menu, click Containers.
+Click + Container.
+Name the new container "container1".
+Click OK.
+Upload Files to the Blob Container
+Click container1 to open our blob container.
+Click Upload.
+In the Upload blob menu, click the folder icon.
+Choose any file to upload (either your own or one of the sample files available for download here).
+Click Upload.
+In the Upload blob menu, click the folder icon again.
+Choose any file to upload (either your own or one of the sample files available for download here).
+Click Advanced.
+Under Upload to folder, type "json".
+Click Upload.
+Close the Upload blob menu.
+View Files in the Blob Container
+In the container1 menu, click the name of the file that was not uploaded to a folder.
+Click Edit to view the file in its native format.
+Click container1 at the top of the page.
+Click the json folder to open it.
+Click the name of the file to open it.
+Click Edit to view the file in its native format.
+Conclusion
+Congratulations, you've successfully completed this hands-on lab!
